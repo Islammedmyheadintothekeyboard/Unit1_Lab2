@@ -5,6 +5,7 @@ import random
 from math import ceil
 from time import time
 from rtas import *
+import matplotlib.pyplot as ploot
 GOAL = 50000                # Target average weight (grams)
 NUM_RATS = 20               # Max adult rats in the lab
 INITIAL_MIN_WT = 200        # The smallest rat (grams)
@@ -175,6 +176,17 @@ def readfile(filename):
     readfile[numb] = int(readfile[numb])
   return readfile
 
+def plotdata(dataSet, generations):
+  for dataPiece in dataSet:
+    ploot.plot(dataPiece)
+    ploot.title('Rat growth over multiple generations')
+    ploot.xlabel('Generations')
+    ploot.ylabel('Mass of Rat (In grams)')
+    ploot.legend(["Largest Rat in gen", "Avg Mass in gen", "Smallest Rat in gen"])
+    ploot.savefig('rat_graph.png')
+
+
+
 def main():
   startime = time()
   print("\n")
@@ -215,6 +227,7 @@ def main():
     writefile((str(specificlist)[1:-1]), filesname)
     readFile = readfile(filesname)
     dataList.append(readFile)
+  plotdata(dataList, generation)
 
   
 
