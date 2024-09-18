@@ -1,6 +1,6 @@
 # Donovan Farley-Freeman
-# 9/5/24
-# Im trying to breed a race of rats that are the size of bullmastiff dogs
+# 9/18/24
+# Creating a graph of the rat data
 import random
 from math import ceil
 from time import time
@@ -112,8 +112,25 @@ def select(rats, pups):
     largest = bestratweights[1][0]
   else:
     largest = bestratweights[0][0]
-    
-  return bestratweights, largest
+
+  smallestrats = [[], []]
+  for gender in range(0, 2, 1):
+    ratind = 0
+    othratind = 0 
+    while othratind != len(rats[gender]):
+      if rats[gender][ratind] <= rats[gender][othratind]:
+        othratind += 1
+      else:
+        ratind += 1
+        othratind = 0
+    smallestrats[gender].append(rats[gender][ratind])
+
+  if smallestrats[0][0] <= smallestrats[1][0]:
+    smallest = smallestrats[1][0]
+  else:
+    smallest = smallestrats[0][0]
+
+  return bestratweights, largest, smallest
 
 def calculate_mean(rats, pups):
   '''Calculate the mean weight of a population'''
@@ -146,7 +163,17 @@ def final_summary(generation, largest_rat, fpm, stime, etime):
   print("\nThe Largest Rat Birthed:")
   print(f"({largest_rat.getsex()}) {largest_rat}g")
 
-   
+def writefile(towrite, filename):
+  with open(filename, 'w') as openedfile:
+    openedfile.write(towrite)
+
+def readfile(filename):
+  with open(filename, 'r') as openedfile:
+    readfile = openedfile.read()
+  readfile = readfile.split(", ")
+  for numb in range(0, len(readfile), 1):
+    readfile[numb] = int(readfile[numb])
+  return readfile
 
 def main():
   startime = time()
@@ -154,14 +181,46 @@ def main():
   rats = initial_population()
   generation = 1
   isfit = False
+
+  largestList = []
+  avgList = []
+  smallestList = []
+
   while generation != GENERATION_LIMIT and (isfit is False):
     pups = breed(rats)
     mutate(pups)
-    rats, largest = select(rats, pups)
+    rats, largest, smallest = select(rats, pups)
+
+    largestList.append(largest.getweight())
+    smallestList.append(smallest.getweight())
+
     isfit, mean = fitness(rats, pups)
-    print(f"{mean}", end = "\t")
+
+    avgList.append(mean)
+
     generation += 1
+
   etime = time()
+
+  count = 0
+  dataList = []
+  for specificlist in [largestList, avgList, smallestList]:
+    if count == 0:
+      filesname = "largest.txt"
+    elif count == 1:
+      filesname = "average.txt"
+    else:
+      filesname = "smallest.txt"
+    count += 1
+    writefile((str(specificlist)[1:-1]), filesname)
+    readFile = readfile(filesname)
+    dataList.append(readFile)
+
+  
+
+
+
+
 
 
 if __name__ == "__main__":
