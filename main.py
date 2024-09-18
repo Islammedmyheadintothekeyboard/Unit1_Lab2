@@ -162,9 +162,6 @@ def main():
     print(f"{mean}", end = "\t")
     generation += 1
   etime = time()
-  print()
-  print(("Final Summary").center(99, "="))
-  final_summary(generation, largest, mean, startime, etime)
 
 
 if __name__ == "__main__":
